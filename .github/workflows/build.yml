@@ -636,6 +636,10 @@ jobs:
           cp $SUSFS4KSU/kernel_patches/fs/* ./common/fs/
           cp $SUSFS4KSU/kernel_patches/include/linux/* ./common/include/linux/
 
+          # SUSFS 2.4.0+: 这两个辅助函数只在 CONFIG_KSU_SUSFS_PRIORITY_UID_FILTER 下使用，
+          # 而 BakaSU 内置 Kconfig 没有该选项，-Werror 会因 unused-function 失败
+          sed -i -E 's/^static (struct cred \*|void )(susfs_switch_to_ksu_domain|susfs_restore_creds)\(/static __maybe_unused \1\2(/' ./common/fs/susfs.c
+
           case "${{ inputs.ksu_variant }}" in
             "Official")
               cd ./KernelSU
